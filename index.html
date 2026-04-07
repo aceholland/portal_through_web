@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Click</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- MAIN CONTAINER -->
+    <main id="app">
+        
+        <!-- ACT 1: THE VOID -->
+        <section id="act1-void" class="act-section active">
+            <div class="typing-container">
+                <p id="void-text-1" class="void-text"></p>
+                <p id="void-text-2" class="void-text"></p>
+                <p id="void-text-3" class="void-text"></p>
+            </div>
+        </section>
+
+        <!-- ACT 2: THE INPUT RITUAL -->
+        <section id="act2-input" class="act-section">
+            <div class="ritual-container">
+                <div class="instruments">
+                    <!-- Rotary Dial -->
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <div style="color:#888; font-size:0.85rem; margin-bottom:15px; letter-spacing:2px; font-family:monospace;">1. SPIN DIAL FOR DESTINATION YEAR</div>
+                        <div class="dial-container">
+                            <div class="dial-marker"></div>
+                            <div class="dial" id="dial">
+                                <!-- JS Will populate year ticks here -->
+                            </div>
+                            <div class="dial-center"></div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar -->
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <div style="color:#888; font-size:0.85rem; margin-bottom:15px; letter-spacing:2px; font-family:monospace;">2. CONFIRM START DATE</div>
+                        <div class="calendar-container">
+                            <div class="calendar" id="calendar">
+                                <div class="calendar-header">
+                                    <span id="cal-month">JANUARY</span>
+                                    <span id="cal-year">1991</span>
+                                </div>
+                                <div class="calendar-pages">
+                                    <!-- JS will populate days -->
+                                </div>
+                                <div class="calendar-stamp">CONFIRMED</div>
+                            </div>
+                            <div class="calendar-nav">
+                                <button id="cal-prev">▲</button>
+                                <button id="cal-next">▼</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="birth-year-section">
+                    <div style="color:#888; font-size:0.85rem; margin-bottom:5px; letter-spacing:2px; font-family:monospace;">3. YOUR ORIGIN</div>
+                    <label for="birth-year-input">What year were you born?</label>
+                    <input type="number" id="birth-year-input" min="1900" max="2025" placeholder="YYYY">
+                </div>
+
+                <button id="btn-open-portal" class="pulse-btn disabled">OPEN THE PORTAL &rarr;</button>
+            </div>
+        </section>
+
+        <!-- ACT 3: THE PORTAL -->
+        <section id="act3-portal" class="act-section">
+            <div class="portal-message" id="portal-message"></div>
+            <div class="portal-tear-overlay"></div>
+        </section>
+
+        <!-- ACT 4: THE ERAS -->
+        <section id="act4-eras" class="act-section">
+            <!-- Fixed UI during Eras -->
+            <div class="era-ui">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="era-progress"></div>
+                </div>
+                <div class="era-indicator" id="era-indicator">1991</div>
+            </div>
+
+            <div class="era-content-wrapper" id="era-wrapper">
+                
+                <!-- Background Canvas for singular effects (stars, particles) -->
+                <canvas id="era-canvas"></canvas>
+
+                <!-- Era specific content structure -->
+                <div class="era-inner">
+                    <header class="era-header">
+                        <h1 id="era-title">Welcome to the World Wide Web</h1>
+                        <nav id="era-nav">
+                            <a href="#">Home</a>
+                            <a href="#">About</a>
+                            <a href="#">Links</a>
+                            <a href="#">Contact</a>
+                        </nav>
+                    </header>
+                    <main class="era-main">
+                        <div class="era-card antigrav-el">
+                            <h2 id="era-card-title">Discovery</h2>
+                            <p id="era-card-desc">The web is a way of organizing information.</p>
+                            <button class="era-btn antigrav-el">Click Here</button>
+                        </div>
+                        
+                        <!-- Decorative era elements -->
+                        <div id="era-decor-1" class="era-decor antigrav-el"></div>
+                        <div id="era-decor-2" class="era-decor antigrav-el"></div>
+                    </main>
+                    <footer class="era-footer">
+                        <p id="era-footer-text">© CERN</p>
+                    </footer>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACT 5: THE MIRROR -->
+        <section id="act5-mirror" class="act-section">
+            <div class="browser-mockup" id="browser-mockup">
+                <div class="browser-chrome">
+                    <div class="browser-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="browser-tab">First Click - A Personal Portal</div>
+                    <div class="browser-url">
+                        <button class="reload-btn">&#x21bb;</button>
+                        <div class="url-bar">https://first-click.web/</div>
+                    </div>
+                </div>
+                <div class="browser-viewport">
+                    <div class="mirror-content">
+                        <!-- Same as current layout or black -->
+                        <div class="mirror-blackout">
+                            <p class="mirror-text" id="mt-1">You have made thousands of clicks.</p>
+                            <p class="mirror-text" id="mt-2">Each one led somewhere new.</p>
+                            <p class="mirror-text" id="mt-3">Every click you've ever made...</p>
+                            <p class="mirror-text" id="mt-4">...was someone's first click.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mirror-outro">
+                <div class="outro-cursor"></div>
+                <button id="btn-restart">Travel again &rarr;</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

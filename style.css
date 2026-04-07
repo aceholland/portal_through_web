@@ -1,0 +1,877 @@
+/* ==========================================================================
+   BASE & RESET
+   ========================================================================== */
+:root {
+    --bg: #000;
+    --text: #fff;
+    --accent: #ff6b00;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: none !important; /* Hide default for custom cursor */
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: monospace;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* ==========================================================================
+   CUSTOM CURSOR
+   ========================================================================== */
+.cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.cursor-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    mix-blend-mode: difference;
+}
+
+.cursor-ring {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: width 0.2s, height 0.2s, background-color 0.2s;
+    mix-blend-mode: difference;
+}
+
+.cursor-ring.active {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* ==========================================================================
+   ACT MANAGEMENT
+   ========================================================================== */
+.act-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease-in-out;
+}
+
+.act-section.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ==========================================================================
+   ACT 1: THE VOID
+   ========================================================================== */
+.typing-container {
+    text-align: center;
+    font-size: 1.5rem;
+    line-height: 2;
+    font-family: 'Courier New', Courier, monospace;
+    max-width: 800px;
+    padding: 2rem;
+}
+
+.void-text {
+    min-height: 2rem;
+}
+
+/* Blinking Cursor for Typing */
+.void-text::after {
+    content: '|';
+    animation: blink 1s step-start infinite;
+    opacity: 0;
+}
+.void-text.typing::after {
+    opacity: 1;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* ==========================================================================
+   ACT 2: INPUT RITUAL
+   ========================================================================== */
+.ritual-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4rem;
+    transform: translateY(50px);
+    opacity: 0;
+    transition: all 2s ease;
+}
+
+.ritual-container.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.instruments {
+    display: flex;
+    gap: 6rem;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .instruments {
+        flex-direction: column;
+        gap: 3rem;
+    }
+}
+
+/* Dial */
+.dial-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #333, #0a0a0a);
+    box-shadow: 
+        inset 0 0 20px #000, 
+        0 20px 50px rgba(0,0,0,0.8),
+        0 0 0 10px #1a1a1a,
+        0 0 0 12px #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dial-marker {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 20px solid var(--accent);
+    filter: drop-shadow(0 0 10px var(--accent));
+    z-index: 10;
+}
+
+.dial {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    /* Transformation updated by JS */
+    transition: transform 0.1s linear;
+}
+
+.dial-tick {
+    position: absolute;
+    left: 50%;
+    bottom: 50%; /* from center */
+    transform-origin: bottom center;
+    height: 50%;
+    width: 2px;
+    display: flex;
+    justify-content: center;
+    /* Rotate pushed by JS */
+}
+
+.dial-tick::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    width: 2px;
+    height: 15px;
+    background: #555;
+}
+
+.dial-tick.major::before {
+    height: 25px;
+    background: #888;
+}
+
+.dial-tick span {
+    position: absolute;
+    top: 40px;
+    color: #666;
+    font-family: sans-serif;
+    font-size: 14px;
+    transform: rotate(180deg); /* Counter rotate to read */
+}
+
+.dial-tick.active span {
+    color: var(--accent);
+    text-shadow: 0 0 10px var(--accent);
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.dial-center {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #222, #000);
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.9);
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Calendar */
+.calendar-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    perspective: 1000px;
+}
+
+.calendar {
+    width: 220px;
+    height: 280px;
+    background: #f4ecdf;
+    color: #333;
+    border-radius: 5px;
+    box-shadow: 2px 5px 15px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.05);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Edge texture */
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 19px, #e0d5c1 19px, #e0d5c1 20px);
+}
+
+.calendar-header {
+    background: #d32f2f;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-family: Impact, sans-serif;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #b71c1c;
+}
+
+.calendar-pages {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 2px;
+    padding: 10px;
+    position: relative;
+}
+
+.cal-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+}
+
+.cal-day:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.calendar-stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg) scale(3);
+    color: #d32f2f;
+    border: 4px solid #d32f2f;
+    padding: 5px 10px;
+    font-family: Impact, sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.1s calc(var(--st-delay, 0)*1s), opacity 0.1s;
+}
+
+.calendar.stamped .calendar-stamp {
+    transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+    opacity: 0.8;
+}
+
+/* Page flip animation */
+.calendar.flipping {
+    animation: pageFlip 0.6s ease-in-out;
+}
+
+@keyframes pageFlip {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(-90deg); filter: brightness(0.5); }
+    50.01% { transform: rotateX(90deg); filter: brightness(0.5); }
+    100% { transform: rotateX(0deg); }
+}
+
+.calendar-nav button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+.calendar-nav button:hover {
+    opacity: 1;
+}
+
+/* Birth Year */
+.birth-year-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+.birth-year-section:focus-within {
+    opacity: 1;
+}
+.birth-year-section label {
+    font-family: sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+.birth-year-section input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #555;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.5rem;
+    text-align: center;
+    width: 100px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+.birth-year-section input:focus {
+    border-color: var(--accent);
+}
+
+/* Portal Button */
+.pulse-btn {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 15px 40px;
+    font-family: sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.pulse-btn:not(.disabled):hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 20px rgba(255,107,0,0.5);
+}
+
+.pulse-btn.disabled {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   ACT 3: THE PORTAL TEARS OPEN
+   ========================================================================== */
+#act3-portal {
+    background: #000;
+    z-index: 100;
+}
+
+.portal-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: serif;
+    font-size: 2rem;
+    text-align: center;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 2s ease;
+    z-index: 10;
+}
+
+.portal-tear-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    /* Clip path will be a tiny dot natively, then expanded via JS/CSS */
+    clip-path: circle(0% at 50% 50%);
+    z-index: 100;
+}
+
+.portal-tear-overlay.pulsing {
+    animation: flashPulse 1.5s ease-out forwards;
+}
+
+@keyframes flashPulse {
+    0% { clip-path: circle(0% at 50% 50%); opacity: 1; }
+    10% { clip-path: circle(2% at 50% 50%); }
+    20% { clip-path: circle(0% at 50% 50%); }
+    100% { clip-path: circle(0% at 50% 50%); opacity: 0; }
+}
+
+.portal-tear-overlay.exploding {
+    animation: tearExplode 2s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+}
+
+@keyframes tearExplode {
+    0% { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%); background: #fff; }
+    20% { clip-path: polygon(45% 40%, 55% 42%, 60% 55%, 52% 60%, 40% 58%, 38% 45%, 45% 40%, 45% 40%); background: #fff; }
+    50% { clip-path: polygon(30% 10%, 80% 20%, 90% 80%, 40% 90%, 10% 70%, 15% 30%, 30% 10%, 30% 10%); background: var(--bg); }
+    100% { clip-path: polygon(-50% -50%, 150% -50%, 150% 150%, -50% 150%, -50% -50%, -50% -50%, -50% -50%, -50% -50%); background: transparent; }
+}
+
+/* ==========================================================================
+   ACT 4: THE ERAS & UI
+   ========================================================================== */
+.era-ui {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--text);
+    transition: width 1s ease;
+}
+
+.era-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    font-family: monospace;
+    backdrop-filter: blur(5px);
+}
+
+.era-content-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: all 1s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#era-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 1s;
+}
+
+.era-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 100px 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: all 1s ease;
+}
+
+/* Base structural styles that change per era */
+.era-header { margin-bottom: 50px; text-align: center; }
+.era-nav { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+.era-main { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+.era-card { padding: 40px; width: 100%; max-width: 600px; text-align: center; }
+.era-btn { padding: 15px 30px; font-size: 1.1rem; }
+.era-footer { padding: 40px; text-align: center; margin-top: auto; }
+
+/* --------------------------------------------------------------------------
+   ERA 1: 1991-1994 (Archaeological)
+   -------------------------------------------------------------------------- */
+.era-1991 {
+    background-color: #c0c0c0;
+    color: #000;
+}
+.era-1991 .era-inner {
+    font-family: "Times New Roman", Times, serif;
+    align-items: flex-start;
+}
+.era-1991 .era-header { text-align: left; border-bottom: 2px solid #000; padding-bottom: 10px; width: 100%; }
+.era-1991 h1 { font-size: 2.5rem; font-weight: normal; }
+.era-1991 h2 { font-size: 1.8rem; font-weight: normal; border-bottom: 1px solid #000; }
+.era-1991 a, .era-1991 .era-btn { 
+    color: #0000ee; text-decoration: underline; background: transparent; border: none; font-family: "Times New Roman"; padding: 0; font-size: 1.2rem;
+}
+.era-1991 .era-card { text-align: left; padding: 0; border: none; box-shadow: none; }
+.era-1991 .progress-fill { background: #000; }
+.era-1991 .era-indicator { background: #fff; color: #000; border-color: #000; border-radius: 0; }
+
+/* --------------------------------------------------------------------------
+   ERA 2: 1995-1999 (Beautiful Chaos)
+   -------------------------------------------------------------------------- */
+.era-1995 {
+    background-color: #000;
+    background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                      radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+    background-size: 550px 550px, 350px 350px;
+    background-position: 0 0, 20px 50px;
+    color: #00ff00;
+}
+.era-1995 .era-inner {
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+.era-1995 h1 { color: #ff0000; text-shadow: 2px 2px #ffff00; font-family: "Papyrus", fantasy; font-size: 3rem; }
+.era-1995 .era-card { background: rgba(0,0,255,0.3); border: 3px ridge #ff00ff; }
+.era-1995 a { color: #ffff00; text-decoration: none; border: 2px outset #ccc; padding: 5px; background: #c0c0c0; color: #000; font-weight: bold; }
+.era-1995 .era-btn { background: #c0c0c0; color: #000; border: 3px outset #fff; font-family: "Comic Sans MS"; font-weight: bold; }
+.era-1995 .era-btn:active { border-style: inset; }
+
+/* --------------------------------------------------------------------------
+   ERA 3: 2000-2004 (Flash Era)
+   -------------------------------------------------------------------------- */
+.era-2000 {
+    background: #111;
+    color: #fff;
+    background-image: linear-gradient(0deg, transparent 24%, rgba(0, 255, 0, .3) 25%, rgba(0, 255, 0, .3) 26%, transparent 27%, transparent 74%, rgba(0, 255, 0, .3) 75%, rgba(0, 255, 0, .3) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 255, 0, .3) 25%, rgba(0, 255, 0, .3) 26%, transparent 27%, transparent 74%, rgba(0, 255, 0, .3) 75%, rgba(0, 255, 0, .3) 76%, transparent 77%, transparent);
+    background-size: 50px 50px;
+}
+.era-2000 .era-inner {
+    font-family: 'Courier New', Courier, monospace;
+}
+.era-2000 h1 { color: #00ff00; letter-spacing: 5px; text-transform: uppercase; font-size: 2.5rem; text-shadow: 0 0 10px #00ff00; }
+.era-2000 .era-card { background: #000; border: 1px solid #00ff00; border-radius: 10px; }
+.era-2000 a { color: #00ffff; }
+.era-2000 .era-btn { background: transparent; color: #00ff00; border: 1px solid #00ff00; border-radius: 0; text-transform: uppercase; letter-spacing: 2px; }
+.era-2000 .era-btn:hover { background: #00ff00; color: #000; }
+
+/* --------------------------------------------------------------------------
+   ERA 4: 2005-2009 (Web 2.0 Gloss)
+   -------------------------------------------------------------------------- */
+.era-2005 {
+    background: #e9eaed;
+    color: #333;
+}
+.era-2005 .era-inner {
+    font-family: "Lucida Grande", Tahoma, Arial, sans-serif;
+}
+.era-2005 h1 { color: #3b5998; text-shadow: 1px 1px 0 #fff; font-size: 3rem; }
+.era-2005 .era-card { 
+    background: #fff; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+    border: 1px solid #ccc;
+}
+.era-2005 a { color: #ff6600; font-weight: bold; text-decoration: none; }
+.era-2005 a:hover { text-decoration: underline; }
+.era-2005 .era-btn { 
+    background: linear-gradient(to bottom, #8bcc42, #5a9915);
+    border: 1px solid #487a11;
+    color: #fff;
+    border-radius: 20px;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.3);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 3px rgba(0,0,0,0.2);
+}
+.era-2005 .progress-fill { background: #3b5998; }
+.era-2005 .era-indicator { background: linear-gradient(to bottom, #fff, #eee); color: #333; border: 1px solid #ccc; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: bold; }
+
+/* --------------------------------------------------------------------------
+   ERA 5: 2010-2014 (Flat Design)
+   -------------------------------------------------------------------------- */
+.era-2010 {
+    background: #f7f9fa;
+    color: #14171a;
+}
+.era-2010 .era-inner {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+.era-2010 h1 { color: #1da1f2; font-weight: 300; font-size: 3.5rem; letter-spacing: -1px; }
+.era-2010 header nav { background: #fff; padding: 10px 20px; border-bottom: 1px solid #e6ecf0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: 4px; }
+.era-2010 .era-card { 
+    background: #fff; 
+    border-radius: 4px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+    border: 1px solid #e6ecf0;
+}
+.era-2010 a { color: #1da1f2; text-decoration: none; }
+.era-2010 .era-btn { 
+    background: #1da1f2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.era-2010 .progress-fill { background: #1da1f2; }
+.era-2010 .era-indicator { background: #fff; color: #1da1f2; border: 1px solid #e6ecf0; font-weight: bold; }
+
+/* --------------------------------------------------------------------------
+   ERA 6: 2015-2019 (The Template)
+   -------------------------------------------------------------------------- */
+.era-2015 {
+    background: #fff;
+    color: #333;
+}
+.era-2015 .era-inner {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 100%;
+    padding: 0;
+}
+.era-2015 .era-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 100px 20px;
+    margin: 0;
+}
+.era-2015 h1 { font-size: 4rem; font-weight: 800; }
+.era-2015 .era-card { 
+    background: #fff; 
+    border-radius: 8px; 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
+    margin-top: -50px; /* Overlap effect */
+    border: none;
+}
+.era-2015 a { color: #fff; text-decoration: none; font-weight: 600; margin: 0 15px; }
+.era-2015 .era-btn { 
+    background: #fff;
+    color: #764ba2;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    padding: 15px 40px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.era-2015 .progress-fill { background: #667eea; }
+.era-2015 .era-indicator { background: #fff; color: #764ba2; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-weight: bold; border-radius: 30px;}
+
+/* --------------------------------------------------------------------------
+   ERA 7: 2020-2025 (The Singularity)
+   -------------------------------------------------------------------------- */
+.era-2020 {
+    background: #050505;
+    color: #fff;
+}
+.era-2020 #era-canvas {
+    opacity: 1; /* Turn on particles */
+}
+.era-2020 .era-inner {
+    font-family: system-ui, -apple-system, sans-serif;
+}
+.era-2020 h1 { 
+    font-size: 5rem; 
+    font-weight: 900; 
+    background: linear-gradient(135deg, #bd00ff, #00ffcc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -2px;
+}
+.era-2020 header nav { display: none; }
+.era-2020 .era-card { 
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px; 
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: transform 0.1s ease-out; /* For antigravity */
+}
+.era-2020 .era-btn { 
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    transition: transform 0.1s ease-out, background 0.3s;
+}
+.era-2020 .era-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+.era-2020 .progress-fill { background: linear-gradient(90deg, #bd00ff, #00ffcc); }
+.era-2020 .era-indicator { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); color: #00ffcc; border: 1px solid rgba(0,255,204,0.3); }
+
+/* Antigravity JS will apply inline transforms to .antigrav-el */
+.antigrav-el {
+    will-change: transform;
+}
+
+/* ==========================================================================
+   ACT 5: THE MIRROR
+   ========================================================================== */
+#act5-mirror {
+    background: #000;
+}
+
+.browser-mockup {
+    width: 80vw;
+    height: 80vh;
+    background: #1e1e1e;
+    border-radius: 10px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    transition: transform 5s ease-in-out, opacity 5s;
+}
+
+.browser-mockup.zoom-in {
+    transform: scale(20);
+    opacity: 0;
+}
+
+.browser-chrome {
+    background: #2d2d2d;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 15px;
+    border-bottom: 1px solid #111;
+}
+
+.browser-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.browser-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #555;
+}
+.browser-dots span:nth-child(1) { background: #ff5f56; }
+.browser-dots span:nth-child(2) { background: #ffbd2e; }
+.browser-dots span:nth-child(3) { background: #27c93f; }
+
+.browser-tab {
+    background: #1e1e1e;
+    color: #ccc;
+    font-family: sans-serif;
+    font-size: 12px;
+    padding: 8px 20px;
+    border-radius: 8px 8px 0 0;
+    margin-top: 15px;
+}
+
+.browser-url {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #1e1e1e;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: #fff;
+    font-family: monospace;
+}
+
+.reload-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+.browser-viewport {
+    flex: 1;
+    position: relative;
+    background: #000;
+}
+
+.mirror-blackout {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.mirror-text {
+    font-family: serif;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+
+.mirror-outro {
+    position: absolute;
+    bottom: 50px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2s;
+}
+
+.mirror-outro.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#btn-restart {
+    background: transparent;
+    color: #ccc;
+    border: 1px solid #333;
+    padding: 10px 20px;
+    font-family: sans-serif;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+#btn-restart:hover {
+    color: #fff;
+    border-color: #fff;
+}
