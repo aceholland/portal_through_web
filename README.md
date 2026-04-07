@@ -17,4 +17,4 @@ Dynamic theme switching across eras
 Real-time cursor-based element repulsion 
 Canvas-based particle systems
 
-First Click is not just a website — it is an emotional, nostalgic, and introspective journey through the evolution of the digital world, designed to make users feel the passage of time through interaction.
+It is an emotional, nostalgic, and introspective journey through the evolution of the digital world, designed to make users feel the passage of time through interaction.
